@@ -23,6 +23,7 @@ BEGIN Event
     Value           0.8
     BEGIN PreReq Type GeneratorLoad Value 0.95 END
     BEGIN PreReq Type Object ObjectId Warden END
+    BEGIN Data Name Load Value 0.8 END
     BEGIN Data Name NumFires Value 12 END
     BEGIN Data Name NumFiresX Value 25 END
     BEGIN Data Name ExplodeOnExtreme Value 1 END
@@ -69,6 +70,7 @@ BEGIN Event
     Advisor         Doctor
     ObjectId        Prisoner
     RoomId          Workshop
+    Targets         1
     BEGIN PreReq Type Object ObjectId Doctor END
     BEGIN PreReq Type Object ObjectId Prisoner RoomId Workshop END
     BEGIN Data Name Effect String Wounded END
@@ -121,6 +123,7 @@ BEGIN Event
     Pool            PoliticianDemand
     BEGIN PreReq Type Object ObjectId Tv RoomId CommonRoom END
     BEGIN Data Name DemandType String Removal END
+	BEGIN Data Name ExtraRemovalDemand1 String LargeTv END
     BEGIN Data Name StartTime Value 720 END
     BEGIN Data Name FinePeriod Value 6 END
     BEGIN Data Name Duration Value 5670 END
@@ -148,6 +151,7 @@ BEGIN Event
     Advisor         Ceo
     Pool            PoliticianDemand
     BEGIN PreReq Type FoodQuantity Value 2 END
+	BEGIN PreReq Type ResearchComplete ResearchRequired Policy END
     BEGIN Data Name DemandType String FoodQuantity END
     BEGIN Data Name FoodAmount Value 1 END
     BEGIN Data Name FoodVariation Value 1 END
@@ -211,4 +215,125 @@ BEGIN Event
     BEGIN Data Name Regime String FreeTime Value 6 END
     BEGIN Data Name Duration Value 7200 END
     BEGIN Data Name NumOutbreaks Value 3 END
+END
+
+BEGIN Event
+    Name            TorrentialRain
+    Action          SetWeather
+    Pool            Weather
+    BEGIN PreReq Type WeatherEnabled END
+    BEGIN PreReq Type NotSeason SeasonType Summer END
+    BEGIN PreReq Type Temperature TemperatureRequired 1 END
+    BEGIN Data Name Weather String TorrentialRain END
+END
+
+BEGIN Event
+    Name            Heatwave
+    Action          SetWeather
+    Pool            Weather
+    BEGIN PreReq Type WeatherEnabled END
+    BEGIN PreReq Type Season SeasonType Summer END
+    BEGIN PreReq Type Temperature TemperatureRequired 20 END
+    BEGIN Data Name Weather String Heatwave END
+END
+
+BEGIN Event
+    Name            ContrabandSurge
+    Action          ContrabandSurge
+    Advisor         Chief
+    ObjectId        Teacher
+    BEGIN PreReq Type Object ObjectId Prisoner Value 50 END
+    BEGIN PreReq Type ReformProgramTeacher ObjectId Teacher END
+    BEGIN Data Name WarningTime Value 720 END
+END
+
+BEGIN Event
+    Name            TreeFire
+    Action          ObjectFire
+    Advisor         Warden
+    ObjectId        Tree
+    RoomId          Forestry
+    ExtremeChance   0.05
+    BEGIN PreReq Type WeatherEnabled END
+    BEGIN PreReq Type Object ObjectId Tree RoomId Forestry END
+    BEGIN PreReq Type Object ObjectId Warden END
+    BEGIN PreReq Type Temperature TemperatureRequired 23 END
+    BEGIN Data Name NumFires Value 6 END
+    BEGIN Data Name NumFiresX Value 12 END
+    BEGIN Data Name Range Value 6.0 END
+    BEGIN Data Name RangeX Value 12.0 END
+END
+
+BEGIN Event
+    Name            FoodPoisoning
+    Action          ApplyStatusEffect
+    Advisor         Doctor
+    ObjectId        Prisoner
+    Targets         20
+    BEGIN PreReq Type Object ObjectId Prisoner Value 100 END
+    BEGIN PreReq Type RoomCondition RoomId Kitchen Value 30 Modifier -1 END
+    BEGIN Data Name Effect String FoodPoisoning END
+    BEGIN Data Name StartValue Value 1.0 END
+    BEGIN Data Name NeedInactive String Food END
+END
+
+BEGIN Event
+    Name            AgitatingRadio
+    Action          NeedProviderEffect
+    Advisor         Chief
+    ObjectId        Radio
+    ExtremeChance   0.05
+    BEGIN PreReq Type Object ObjectId Radio Value 1 END
+    BEGIN Data Name Effect String RiledUp END
+    BEGIN Data Name Target String Radio END
+    BEGIN Data Name Duration Value 4320 END
+END
+
+BEGIN Event
+    Name            CIListLeak
+    Action          AddReputation
+    Advisor         Chief
+    BEGIN PreReq Type ConfidentialInformants Value 6 END
+    BEGIN Data Name Reputation String Snitch END
+    BEGIN Data Name Group String Informants END
+    BEGIN Data Name Chance Value 0.66 END
+END
+
+BEGIN Event
+    Name            KeyserSoze
+    Action          AddReputation
+    Advisor         Chief
+    Targets         1
+    BEGIN PreReq Type Object ObjectId Prisoner Value 50 END
+    BEGIN PreReq Type PrisonersInCategory Value 10 Modifier 1 END
+    BEGIN Data Name Reputation String Legendary END
+    BEGIN Data Name Group String MinSec END
+END
+
+BEGIN Event
+    Name            MassTunneling
+    Action          MassTunneling
+    BEGIN PreReq Type Object ObjectId Prisoner Value 100 END
+    BEGIN PreReq Type Room RoomId Cell Value 100 END
+END
+
+BEGIN Event
+    Name            PreacherConversion
+    Action          AddReputation
+    Advisor         Warden
+    Targets         1
+    BEGIN PreReq Type Object ObjectId Prisoner Value 100 END
+    BEGIN Data Name Reputation String Preacher END
+END
+
+BEGIN Event
+    Name            CorruptingSpiritualist
+    Action          TeacherEffect
+    Advisor         Chief
+    ObjectId        SpiritualLeader
+    BEGIN PreReq Type Object ObjectId Prisoner Value 50 END
+    BEGIN PreReq Type ReformProgramTeacher ObjectId SpiritualLeader END
+    BEGIN Data Name WarningTime Value 720 END
+	BEGIN Data Name ChargeRate Value 10 END
+	BEGIN Data Name Effect String RiledUp END
 END
